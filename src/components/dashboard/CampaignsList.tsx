@@ -62,8 +62,8 @@ const CampaignsList = ({
   onResumeCampaign = () => {},
   onViewAnalytics = () => {},
 }: CampaignsListProps) => {
-  const [sortColumn, setSortColumn] = useState<keyof Campaign>("startDate");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sortColumn, setSortColumn] = useState<keyof Campaign>("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const handleSort = (column: keyof Campaign) => {
     if (sortColumn === column) {
@@ -78,46 +78,60 @@ const CampaignsList = ({
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
 
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return sortDirection === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
+    if (aValue < bValue) {
+      return sortDirection === "asc" ? -1 : 1;
     }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+    if (aValue > bValue) {
+      return sortDirection === "asc" ? 1 : -1;
     }
-
     return 0;
   });
 
   const getStatusBadgeVariant = (status: Campaign["status"]) => {
     switch (status) {
       case "active":
-        return "default";
+        return "success";
       case "paused":
-        return "secondary";
+        return "warning";
       case "completed":
-        return "outline";
-      case "scheduled":
         return "secondary";
+      case "scheduled":
+        return "info";
       default:
-        return "outline";
+        return "default";
+    }
+  };
+
+  const getStatusText = (status: Campaign["status"]) => {
+    switch (status) {
+      case "active":
+        return "活跃";
+      case "paused":
+        return "已暂停";
+      case "completed":
+        return "已完成";
+      case "scheduled":
+        return "已计划";
+      default:
+        return status;
     }
   };
 
   return (
-    <Card className="w-full bg-white">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl flex justify-between items-center">
-          <span>Active Campaigns</span>
-          <Button size="sm">
-            <Mail className="mr-2 h-4 w-4" /> New Campaign
-          </Button>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">活动列表</h2>
+        <Button variant="outline" size="sm">
+          <Calendar className="h-4 w-4 mr-2" />
+          查看所有活动
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md font-medium">最近活动</CardTitle>
+        </CardHeader>
+        <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
@@ -126,8 +140,10 @@ const CampaignsList = ({
                   onClick={() => handleSort("name")}
                 >
                   <div className="flex items-center">
-                    Campaign Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    活动名称
+                    {sortColumn === "name" && (
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
                   </div>
                 </TableHead>
                 <TableHead
@@ -135,239 +151,180 @@ const CampaignsList = ({
                   onClick={() => handleSort("status")}
                 >
                   <div className="flex items-center">
-                    Status
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    状态
+                    {sortColumn === "status" && (
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
                   </div>
                 </TableHead>
-                <TableHead>Progress</TableHead>
                 <TableHead
-                  className="cursor-pointer"
+                  className="cursor-pointer text-right"
+                  onClick={() => handleSort("progress")}
+                >
+                  <div className="flex items-center justify-end">
+                    进度
+                    {sortColumn === "progress" && (
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer text-right"
                   onClick={() => handleSort("responseRate")}
                 >
-                  <div className="flex items-center">
-                    Response Rate
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  <div className="flex items-center justify-end">
+                    回复率
+                    {sortColumn === "responseRate" && (
+                      <ArrowUpDown className="ml-2 h-4 w-4" />
+                    )}
                   </div>
                 </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("startDate")}
-                >
-                  <div className="flex items-center">
-                    Start Date
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("lastActivity")}
-                >
-                  <div className="flex items-center">
-                    Last Activity
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                  </div>
-                </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedCampaigns.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-6">
-                    <div className="flex flex-col items-center justify-center text-muted-foreground">
-                      <Mail className="h-10 w-10 mb-2 opacity-20" />
-                      <p>No campaigns found</p>
-                      <Button variant="outline" className="mt-4">
-                        Create your first campaign
+              {sortedCampaigns.map((campaign) => (
+                <TableRow key={campaign.id}>
+                  <TableCell>
+                    <div className="font-medium">{campaign.name}</div>
+                    <div className="text-xs text-gray-500 flex items-center mt-1">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {campaign.lastActivity}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusBadgeVariant(campaign.status)}>
+                      {getStatusText(campaign.status)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="font-medium">
+                      {campaign.progress}% ({campaign.sentEmails}/
+                      {campaign.totalEmails})
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                      <div
+                        className="bg-primary h-1.5 rounded-full"
+                        style={{ width: `${campaign.progress}%` }}
+                      ></div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {campaign.responseRate}%
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onViewAnalytics(campaign.id)}
+                      >
+                        <BarChart className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEditCampaign(campaign.id)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {campaign.status === "active" ? (
+                            <DropdownMenuItem
+                              onClick={() => onPauseCampaign(campaign.id)}
+                            >
+                              <Pause className="h-4 w-4 mr-2" />
+                              暂停活动
+                            </DropdownMenuItem>
+                          ) : campaign.status === "paused" ? (
+                            <DropdownMenuItem
+                              onClick={() => onResumeCampaign(campaign.id)}
+                            >
+                              <Play className="h-4 w-4 mr-2" />
+                              恢复活动
+                            </DropdownMenuItem>
+                          ) : null}
+                          <DropdownMenuItem
+                            onClick={() => onDuplicateCampaign(campaign.id)}
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            复制活动
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => onDeleteCampaign(campaign.id)}
+                            className="text-red-600"
+                          >
+                            <Trash className="h-4 w-4 mr-2" />
+                            删除活动
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : (
-                sortedCampaigns.map((campaign) => (
-                  <TableRow key={campaign.id}>
-                    <TableCell>
-                      <div className="font-medium">{campaign.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {campaign.template}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(campaign.status)}>
-                        {campaign.status.charAt(0).toUpperCase() +
-                          campaign.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className="bg-primary h-2.5 rounded-full"
-                            style={{ width: `${campaign.progress}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {campaign.sentEmails}/{campaign.totalEmails}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <span
-                          className={`font-medium ${campaign.responseRate >= 15 ? "text-green-600" : campaign.responseRate >= 5 ? "text-amber-600" : "text-red-600"}`}
-                        >
-                          {campaign.responseRate}%
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span>{campaign.startDate}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span>{campaign.lastActivity}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end">
-                        {campaign.status === "active" ? (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onPauseCampaign(campaign.id)}
-                            className="h-8 w-8"
-                          >
-                            <Pause className="h-4 w-4" />
-                          </Button>
-                        ) : campaign.status === "paused" ? (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onResumeCampaign(campaign.id)}
-                            className="h-8 w-8"
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
-                        ) : null}
-
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onViewAnalytics(campaign.id)}
-                          className="h-8 w-8"
-                        >
-                          <BarChart className="h-4 w-4" />
-                        </Button>
-
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => onEditCampaign(campaign.id)}
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => onDuplicateCampaign(campaign.id)}
-                            >
-                              <Copy className="mr-2 h-4 w-4" />
-                              Duplicate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => onDeleteCampaign(campaign.id)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              ))}
             </TableBody>
           </Table>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
 const defaultCampaigns: Campaign[] = [
   {
     id: "1",
-    name: "Senior Developer Outreach",
+    name: "高级开发者外联",
     status: "active",
     progress: 65,
-    sentEmails: 65,
-    totalEmails: 100,
-    responseRate: 18,
+    sentEmails: 89,
+    totalEmails: 137,
+    responseRate: 24.6,
     startDate: "2023-10-15",
-    template: "Initial Connection",
-    lastActivity: "2 hours ago",
+    template: "初次联系",
+    lastActivity: "2小时前",
   },
   {
     id: "2",
-    name: "Product Manager Recruitment",
-    status: "paused",
-    progress: 30,
-    sentEmails: 30,
-    totalEmails: 100,
-    responseRate: 12,
-    startDate: "2023-10-10",
-    template: "Follow-up Message",
-    lastActivity: "1 day ago",
-  },
-  {
-    id: "3",
-    name: "UX Designer Campaign",
-    status: "completed",
-    progress: 100,
-    sentEmails: 75,
-    totalEmails: 75,
-    responseRate: 22,
-    startDate: "2023-09-28",
-    template: "Interview Invitation",
-    lastActivity: "5 days ago",
-  },
-  {
-    id: "4",
-    name: "DevOps Engineer Search",
+    name: "UX设计师招聘",
     status: "scheduled",
     progress: 0,
     sentEmails: 0,
-    totalEmails: 50,
+    totalEmails: 75,
     responseRate: 0,
     startDate: "2023-10-25",
-    template: "Initial Connection",
-    lastActivity: "Just now",
+    template: "设计师外联",
+    lastActivity: "1天前",
   },
   {
-    id: "5",
-    name: "Marketing Specialist Outreach",
-    status: "active",
+    id: "3",
+    name: "产品经理招聘",
+    status: "paused",
     progress: 42,
-    sentEmails: 21,
-    totalEmails: 50,
-    responseRate: 9,
-    startDate: "2023-10-12",
-    template: "Follow-up Message",
-    lastActivity: "3 hours ago",
+    sentEmails: 32,
+    totalEmails: 76,
+    responseRate: 18.7,
+    startDate: "2023-10-10",
+    template: "产品团队扩张",
+    lastActivity: "5小时前",
+  },
+  {
+    id: "4",
+    name: "数据科学家外联",
+    status: "completed",
+    progress: 100,
+    sentEmails: 112,
+    totalEmails: 112,
+    responseRate: 31.2,
+    startDate: "2023-09-28",
+    template: "数据团队招聘",
+    lastActivity: "3天前",
   },
 ];
 

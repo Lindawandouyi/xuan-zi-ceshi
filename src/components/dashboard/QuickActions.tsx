@@ -16,7 +16,7 @@ const QuickActions = ({
   return (
     <div className="w-full bg-white p-4 rounded-lg shadow-sm border">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold">Quick Actions</h2>
+        <h2 className="text-lg font-semibold">快捷操作</h2>
         <div className="flex flex-wrap gap-3">
           <Button
             onClick={onNewSearch}
@@ -24,7 +24,7 @@ const QuickActions = ({
             variant="outline"
           >
             <Search className="h-4 w-4" />
-            New Search
+            新建搜索
           </Button>
           <Button
             onClick={onCreateTemplate}
@@ -32,14 +32,14 @@ const QuickActions = ({
             variant="outline"
           >
             <FileText className="h-4 w-4" />
-            Create Template
+            创建模板
           </Button>
           <Button
             onClick={onScheduleCampaign}
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Schedule Campaign
+            安排活动
           </Button>
         </div>
       </div>

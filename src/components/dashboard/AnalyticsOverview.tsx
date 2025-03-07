@@ -47,7 +47,7 @@ const AnalyticCard = ({
               {change.value}%
             </span>
             <span className="text-muted-foreground ml-1">
-              {description || "from last month"}
+              {description || "较上月"}
             </span>
           </p>
         )}
@@ -89,30 +89,28 @@ const AnalyticsOverview = ({
     <div className="w-full bg-white">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticCard
-          title="Profiles Scraped"
+          title="已抓取简历"
           value={stats.profilesScraped.toLocaleString()}
-          icon={<Users className="h-5 w-5 text-blue-600" />}
+          icon={<Users className="h-4 w-4" />}
           change={changes.profilesScraped}
         />
         <AnalyticCard
-          title="Emails Sent"
+          title="已发送邮件"
           value={stats.emailsSent.toLocaleString()}
-          icon={<Mail className="h-5 w-5 text-indigo-600" />}
+          icon={<Mail className="h-4 w-4" />}
           change={changes.emailsSent}
         />
         <AnalyticCard
-          title="Response Rate"
+          title="回复率"
           value={`${stats.responseRate}%`}
-          icon={<BarChart className="h-5 w-5 text-emerald-600" />}
+          icon={<BarChart className="h-4 w-4" />}
           change={changes.responseRate}
-          description="from previous campaigns"
         />
         <AnalyticCard
-          title="Active Campaigns"
+          title="活跃活动"
           value={stats.activeCampaigns}
-          icon={<Clock className="h-5 w-5 text-amber-600" />}
+          icon={<Clock className="h-4 w-4" />}
           change={changes.activeCampaigns}
-          description="currently running"
         />
       </div>
     </div>
