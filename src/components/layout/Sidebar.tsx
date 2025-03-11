@@ -41,12 +41,20 @@ const Sidebar = ({
   const currentPath = location.pathname;
 
   const navigationItems = [
+<<<<<<< HEAD
     { path: "/", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
     { path: "/search", label: "Search", icon: <Search size={20} /> },
     { path: "/templates", label: "Templates", icon: <Mail size={20} /> },
     { path: "/campaigns", label: "Campaigns", icon: <Send size={20} /> },
     { path: "/im", label: "IM", icon: <MessageSquare size={20} /> },
     { path: "/settings", label: "Settings", icon: <Settings size={20} /> },
+=======
+    { path: "/", label: "仪表盘", icon: <LayoutDashboard size={20} /> },
+    { path: "/search", label: "搜索", icon: <Search size={20} /> },
+    { path: "/templates", label: "模板", icon: <Mail size={20} /> },
+    { path: "/campaigns", label: "活动", icon: <Send size={20} /> },
+    { path: "/settings", label: "设置", icon: <Settings size={20} /> },
+>>>>>>> 77294604f6e4e15e664e99930c9adc2419632c7d
   ];
 
   const isActive = (path: string) => {
@@ -73,14 +81,14 @@ const Sidebar = ({
       <div className="p-4 flex items-center justify-center border-b">
         {collapsed ? (
           <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-lg">L</span>
+            <span className="text-white font-bold text-lg">领</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-              <span className="text-white font-bold text-lg">L</span>
+              <span className="text-white font-bold text-lg">领</span>
             </div>
-            <span className="font-bold text-lg">LinkedIn Scraper</span>
+            <span className="font-bold text-lg">领英抓取工具</span>
           </div>
         )}
       </div>
@@ -131,7 +139,7 @@ const Sidebar = ({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Notifications</p>
+                <p>通知</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -148,7 +156,7 @@ const Sidebar = ({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Help & Support</p>
+                <p>帮助与支持</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -200,7 +208,7 @@ const Sidebar = ({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Log Out</p>
+                  <p>退出登录</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

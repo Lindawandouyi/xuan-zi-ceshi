@@ -33,10 +33,10 @@ const CampaignsPage = () => {
   const campaigns: Campaign[] = [
     {
       id: "1",
-      name: "Senior Developer Outreach",
+      name: "高级开发者外联",
       status: "active",
       startDate: "2023-10-15",
-      targetAudience: "Software Engineers with 5+ years experience",
+      targetAudience: "5年以上经验的软件工程师",
       totalRecipients: 150,
       sentEmails: 89,
       openRate: 42,
@@ -44,10 +44,10 @@ const CampaignsPage = () => {
     },
     {
       id: "2",
-      name: "UX Designer Recruitment",
+      name: "UX设计师招聘",
       status: "scheduled",
       startDate: "2023-10-25",
-      targetAudience: "UX/UI Designers in San Francisco",
+      targetAudience: "旧金山的UX/UI设计师",
       totalRecipients: 75,
       sentEmails: 0,
       openRate: 0,
@@ -55,564 +55,381 @@ const CampaignsPage = () => {
     },
     {
       id: "3",
-      name: "Product Manager Follow-up",
+      name: "数据科学家搜索",
       status: "completed",
-      startDate: "2023-09-10",
-      targetAudience: "Product Managers in Tech Industry",
+      startDate: "2023-09-20",
+      targetAudience: "有机器学习经验的数据科学家",
       totalRecipients: 120,
       sentEmails: 120,
       openRate: 68,
       responseRate: 22,
     },
-    {
-      id: "4",
-      name: "Data Science Talent Search",
-      status: "paused",
-      startDate: "2023-10-05",
-      targetAudience: "Data Scientists and ML Engineers",
-      totalRecipients: 200,
-      sentEmails: 45,
-      openRate: 38,
-      responseRate: 8,
-    },
   ];
 
   const handleCreateCampaign = () => {
     setShowScheduler(true);
+    setSelectedCampaign(null);
   };
 
-  const handleScheduleSubmit = (data: any) => {
-    console.log("Campaign scheduled:", data);
+  const handleBackToOverview = () => {
     setShowScheduler(false);
-    // In a real app, would create the campaign and refresh the list
+    setSelectedCampaign(null);
+    setActiveTab("overview");
   };
 
-  const handleCampaignSelect = (campaign: Campaign) => {
+  const handleViewCampaign = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "scheduled":
-        return "bg-blue-100 text-blue-800";
-      case "completed":
-        return "bg-gray-100 text-gray-800";
-      case "paused":
-        return "bg-yellow-100 text-yellow-800";
-      case "draft":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
+    setShowScheduler(false);
   };
 
   if (showScheduler) {
     return (
-      <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-        <div className="mb-6">
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center mb-6">
           <Button
             variant="ghost"
-            onClick={() => setShowScheduler(false)}
-            className="mb-4"
+            size="sm"
+            onClick={handleBackToOverview}
+            className="mr-4"
           >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Back to Campaigns
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            返回
           </Button>
-          <h1 className="text-2xl font-bold">Create New Campaign</h1>
+          <h1 className="text-2xl font-bold">安排新活动</h1>
         </div>
-        <CampaignScheduler onSchedule={handleScheduleSubmit} />
+        <CampaignScheduler onCancel={handleBackToOverview} />
       </div>
     );
   }
 
   if (selectedCampaign) {
     return (
-      <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-        <div className="mb-6">
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center mb-6">
           <Button
             variant="ghost"
-            onClick={() => setSelectedCampaign(null)}
-            className="mb-4"
+            size="sm"
+            onClick={handleBackToOverview}
+            className="mr-4"
           >
-            <ChevronLeft className="mr-2 h-4 w-4" /> Back to Campaigns
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            返回
           </Button>
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">{selectedCampaign.name}</h1>
-              <div className="flex items-center mt-1">
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${getStatusColor(selectedCampaign.status)}`}
-                >
-                  {selectedCampaign.status.charAt(0).toUpperCase() +
-                    selectedCampaign.status.slice(1)}
-                </span>
-                <span className="text-sm text-gray-500 ml-3">
-                  Started: {selectedCampaign.startDate}
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              {selectedCampaign.status === "active" && (
-                <Button variant="outline">Pause Campaign</Button>
-              )}
-              {selectedCampaign.status === "paused" && (
-                <Button variant="outline">Resume Campaign</Button>
-              )}
-              <Button variant="destructive">Delete Campaign</Button>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold">{selectedCampaign.name}</h1>
         </div>
 
-        <CampaignDetails />
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="details" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              活动详情
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart2 className="h-4 w-4" />
+              分析
+            </TabsTrigger>
+            <TabsTrigger value="recipients" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              收件人
+            </TabsTrigger>
+            <TabsTrigger value="schedule" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              时间表
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="details">
+            <CampaignDetails campaign={selectedCampaign} />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold mb-4">活动分析</h2>
+              <p className="text-gray-500">
+                此处将显示活动的详细分析数据。
+              </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="recipients">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold mb-4">收件人列表</h2>
+              <p className="text-gray-500">
+                此处将显示活动的收件人列表。
+              </p>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="schedule">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-lg font-semibold mb-4">活动时间表</h2>
+              <p className="text-gray-500">
+                此处将显示活动的发送时间表。
+              </p>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Email Campaigns</h1>
-        <Button onClick={handleCreateCampaign}>Create Campaign</Button>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">活动</h1>
+          <p className="text-gray-500">
+            管理您的外联活动和自动化邮件序列
+          </p>
+        </div>
+        <Button onClick={handleCreateCampaign}>创建新活动</Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
+          <TabsTrigger value="overview">概览</TabsTrigger>
+          <TabsTrigger value="active">活跃</TabsTrigger>
+          <TabsTrigger value="scheduled">已计划</TabsTrigger>
+          <TabsTrigger value="completed">已完成</TabsTrigger>
+          <TabsTrigger value="drafts">草稿</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700">
-                  Total Campaigns
-                </h3>
-                <BarChart2 className="h-5 w-5 text-blue-500" />
-              </div>
-              <p className="text-3xl font-bold mt-2">{campaigns.length}</p>
-              <p className="text-sm text-gray-500 mt-1">Across all statuses</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700">
-                  Active Campaigns
-                </h3>
-                <Mail className="h-5 w-5 text-green-500" />
-              </div>
-              <p className="text-3xl font-bold mt-2">
+              <h3 className="text-lg font-semibold mb-2">活跃活动</h3>
+              <p className="text-3xl font-bold">
                 {campaigns.filter((c) => c.status === "active").length}
               </p>
-              <p className="text-sm text-gray-500 mt-1">Currently sending</p>
             </div>
-
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700">
-                  Total Recipients
-                </h3>
-                <Users className="h-5 w-5 text-purple-500" />
-              </div>
-              <p className="text-3xl font-bold mt-2">
-                {campaigns.reduce(
-                  (sum, campaign) => sum + campaign.totalRecipients,
-                  0,
-                )}
+              <h3 className="text-lg font-semibold mb-2">已发送邮件</h3>
+              <p className="text-3xl font-bold">
+                {campaigns.reduce((sum, c) => sum + c.sentEmails, 0)}
               </p>
-              <p className="text-sm text-gray-500 mt-1">Across all campaigns</p>
             </div>
-
             <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-gray-700">
-                  Avg. Response Rate
-                </h3>
-                <Clock className="h-5 w-5 text-amber-500" />
-              </div>
-              <p className="text-3xl font-bold mt-2">
+              <h3 className="text-lg font-semibold mb-2">平均打开率</h3>
+              <p className="text-3xl font-bold">
                 {Math.round(
                   campaigns.reduce(
-                    (sum, campaign) => sum + campaign.responseRate,
+                    (sum, c) => sum + (c.sentEmails > 0 ? c.openRate : 0),
                     0,
-                  ) / campaigns.length,
+                  ) / campaigns.filter((c) => c.sentEmails > 0).length,
                 )}
                 %
               </p>
-              <p className="text-sm text-gray-500 mt-1">Overall performance</p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h3 className="text-lg font-semibold mb-2">平均回复率</h3>
+              <p className="text-3xl font-bold">
+                {Math.round(
+                  campaigns.reduce(
+                    (sum, c) => sum + (c.sentEmails > 0 ? c.responseRate : 0),
+                    0,
+                  ) / campaigns.filter((c) => c.sentEmails > 0).length,
+                )}
+                %
+              </p>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-medium">Recent Campaigns</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Target Audience
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Progress
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Open Rate
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Response Rate
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {campaigns.map((campaign) => (
-                    <tr
-                      key={campaign.id}
-                      className="hover:bg-gray-50 cursor-pointer"
-                      onClick={() => handleCampaignSelect(campaign)}
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">最近活动</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns.map((campaign) => (
+                <div
+                  key={campaign.id}
+                  className="border rounded-lg overflow-hidden"
+                >
+                  <div className="p-4 border-b">
+                    <h3 className="font-semibold text-lg mb-1">
+                      {campaign.name}
+                    </h3>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Clock className="h-4 w-4 mr-1" />
+                      开始于: {campaign.startDate}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-500">状态</p>
+                        <p className="font-medium">
+                          {campaign.status === "active"
+                            ? "活跃"
+                            : campaign.status === "scheduled"
+                            ? "已计划"
+                            : campaign.status === "completed"
+                            ? "已完成"
+                            : campaign.status === "paused"
+                            ? "已暂停"
+                            : "草稿"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">收件人</p>
+                        <p className="font-medium">{campaign.totalRecipients}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">打开率</p>
+                        <p className="font-medium">{campaign.openRate}%</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">回复率</p>
+                        <p className="font-medium">{campaign.responseRate}%</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleViewCampaign(campaign)}
+                      className="w-full"
                     >
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {campaign.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Started: {campaign.startDate}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(campaign.status)}`}
-                        >
-                          {campaign.status.charAt(0).toUpperCase() +
-                            campaign.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {campaign.targetAudience}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div
-                              className="bg-blue-600 h-2.5 rounded-full"
-                              style={{
-                                width: `${Math.round((campaign.sentEmails / campaign.totalRecipients) * 100)}%`,
-                              }}
-                            ></div>
-                          </div>
-                          <span className="ml-2 text-xs text-gray-500">
-                            {campaign.sentEmails}/{campaign.totalRecipients}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {campaign.openRate}%
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {campaign.responseRate}%
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCampaignSelect(campaign);
-                          }}
-                        >
-                          View
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      查看详情
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="active" className="space-y-4">
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-medium">Active Campaigns</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Target Audience
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Progress
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Open Rate
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Response Rate
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {campaigns
-                    .filter((c) => c.status === "active")
-                    .map((campaign) => (
-                      <tr
-                        key={campaign.id}
-                        className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => handleCampaignSelect(campaign)}
+        <TabsContent value="active">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">活跃活动</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns
+                .filter((c) => c.status === "active")
+                .map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    <div className="p-4 border-b">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {campaign.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        开始于: {campaign.startDate}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <Button
+                        onClick={() => handleViewCampaign(campaign)}
+                        className="w-full"
                       >
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {campaign.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Started: {campaign.startDate}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.targetAudience}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-full bg-gray-200 rounded-full h-2.5">
-                              <div
-                                className="bg-blue-600 h-2.5 rounded-full"
-                                style={{
-                                  width: `${Math.round((campaign.sentEmails / campaign.totalRecipients) * 100)}%`,
-                                }}
-                              ></div>
-                            </div>
-                            <span className="ml-2 text-xs text-gray-500">
-                              {campaign.sentEmails}/{campaign.totalRecipients}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.openRate}%
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.responseRate}%
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mr-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Handle pause action
-                            }}
-                          >
-                            Pause
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCampaignSelect(campaign);
-                            }}
-                          >
-                            View
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                        查看详情
+                      </Button>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="scheduled" className="space-y-4">
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-medium">Scheduled Campaigns</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Start Date
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Target Audience
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipients
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {campaigns
-                    .filter((c) => c.status === "scheduled")
-                    .map((campaign) => (
-                      <tr
-                        key={campaign.id}
-                        className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => handleCampaignSelect(campaign)}
+        <TabsContent value="scheduled">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">已计划活动</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns
+                .filter((c) => c.status === "scheduled")
+                .map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    <div className="p-4 border-b">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {campaign.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        开始于: {campaign.startDate}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <Button
+                        onClick={() => handleViewCampaign(campaign)}
+                        className="w-full"
                       >
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {campaign.name}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.startDate}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.targetAudience}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.totalRecipients}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mr-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Handle edit action
-                            }}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCampaignSelect(campaign);
-                            }}
-                          >
-                            View
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                        查看详情
+                      </Button>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="completed" className="space-y-4">
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-            <div className="p-4 border-b">
-              <h2 className="text-lg font-medium">Completed Campaigns</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Target Audience
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipients
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Open Rate
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Response Rate
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {campaigns
-                    .filter((c) => c.status === "completed")
-                    .map((campaign) => (
-                      <tr
-                        key={campaign.id}
-                        className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => handleCampaignSelect(campaign)}
+        <TabsContent value="completed">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">已完成活动</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns
+                .filter((c) => c.status === "completed")
+                .map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    <div className="p-4 border-b">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {campaign.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        开始于: {campaign.startDate}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <Button
+                        onClick={() => handleViewCampaign(campaign)}
+                        className="w-full"
                       >
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {campaign.name}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.startDate}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.targetAudience}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.totalRecipients}
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.openRate}%
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {campaign.responseRate}%
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mr-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Handle duplicate action
-                            }}
-                          >
-                            Duplicate
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCampaignSelect(campaign);
-                            }}
-                          >
-                            View
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
+                        查看详情
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="drafts">
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold mb-4">草稿活动</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {campaigns
+                .filter((c) => c.status === "draft")
+                .map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    <div className="p-4 border-b">
+                      <h3 className="font-semibold text-lg mb-1">
+                        {campaign.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock className="h-4 w-4 mr-1" />
+                        创建于: {campaign.startDate}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <Button
+                        onClick={() => handleViewCampaign(campaign)}
+                        className="w-full"
+                      >
+                        编辑草稿
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              {campaigns.filter((c) => c.status === "draft").length === 0 && (
+                <div className="col-span-3 text-center py-8">
+                  <p className="text-gray-500">没有草稿活动</p>
+                </div>
+              )}
             </div>
           </div>
         </TabsContent>

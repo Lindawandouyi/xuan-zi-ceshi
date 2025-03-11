@@ -10,10 +10,9 @@ const SettingsPage = () => {
     <div className="container mx-auto py-8 bg-gray-50 min-h-screen">
       <div className="flex flex-col space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight">设置</h1>
           <p className="text-muted-foreground mt-2">
-            Configure your account, email, and notification preferences for the
-            LinkedIn Resume Scraper.
+            配置您的账户、电子邮件和通知首选项。
           </p>
         </div>
 
@@ -21,26 +20,26 @@ const SettingsPage = () => {
           <TabsList className="mb-6">
             <TabsTrigger value="account" className="flex items-center gap-2">
               <Cog className="h-4 w-4" />
-              Account
+              账户
             </TabsTrigger>
             <TabsTrigger value="email" className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
-              Email
+              电子邮件
             </TabsTrigger>
             <TabsTrigger
               value="notifications"
               className="flex items-center gap-2"
             >
               <Bell className="h-4 w-4" />
-              Notifications
+              通知
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="account" className="space-y-6">
             <AccountSettings
               onSave={(data) => {
-                console.log("Account settings saved:", data);
-                // In a real app, this would save to backend
+                console.log("账户设置已保存:", data);
+                // 在实际应用中，这将保存到后端
               }}
             />
           </TabsContent>
@@ -48,8 +47,8 @@ const SettingsPage = () => {
           <TabsContent value="email" className="space-y-6">
             <EmailSettings
               onSave={(data) => {
-                console.log("Email settings saved:", data);
-                // In a real app, this would save to backend
+                console.log("电子邮件设置已保存:", data);
+                // 在实际应用中，这将保存到后端
               }}
             />
           </TabsContent>
@@ -58,9 +57,9 @@ const SettingsPage = () => {
             <NotificationSettings
               onSettingChange={(id, type, value) => {
                 console.log(
-                  `Notification setting changed: ${id}, ${type}, ${value}`,
+                  `通知设置已更改: ${id}, ${type}, ${value}`,
                 );
-                // In a real app, this would save to backend
+                // 在实际应用中，这将保存到后端
               }}
             />
           </TabsContent>
