@@ -19,6 +19,7 @@ import {
   Bell,
   ChevronLeft,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -44,6 +45,7 @@ const Sidebar = ({
     { path: "/search", label: "Search", icon: <Search size={20} /> },
     { path: "/templates", label: "Templates", icon: <Mail size={20} /> },
     { path: "/campaigns", label: "Campaigns", icon: <Send size={20} /> },
+    { path: "/im", label: "IM", icon: <MessageSquare size={20} /> },
     { path: "/settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
